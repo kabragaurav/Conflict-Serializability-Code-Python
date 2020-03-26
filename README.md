@@ -6,7 +6,7 @@ and for non-serializable schedule, give the cycle(s) present in the graph.<br>Th
 ## Author : [Gaurav Kabra](https://www.quora.com/profile/Gaurav-Kabra-23)
 
 ### Input:
-Input file name is asked. [Here](https://github.com/gaurav-kabra-official/Conflict-Serializable/tree/master/Inputs) three sample files have already been provided.
+Input file name is asked. [Here](https://github.com/gaurav-kabra-official/Conflict-Serializable/tree/master/Inputs) three sample files have already been provided.<br>Input1 is about cycle.<br>Input2 is CS.<br>Input3 is again about cycle but only a part is cyclic unlike case#1 where whole graph was cyclic.
 
 ### Run
 Type _python driver.py_<br>and that's it!
