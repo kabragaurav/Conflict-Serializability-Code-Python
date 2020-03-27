@@ -93,7 +93,7 @@ def cycle_printing_fn(graph):
     for cycle in simple_cycles(graph):
         # Make plausible string
         for ele in cycle:
-            string += "T"+str(ele)+" "
+            string += "T"+str(ele+1)+" "
         print("Cycle #{0}".format(cycle_no+1)+" => "+string)
         cycle_no += 1
         string = ""     # reset string for next cycle
