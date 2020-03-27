@@ -21,7 +21,6 @@ from cycle_printer import *
 graph = {}   
 
 try:
-    print("####################### SCHEDULE : #########################")
     def isConflicting(instruction1, instruction2):
         if instruction1 == "VACANT" or instruction2 == "VACANT":
             return False
@@ -63,6 +62,7 @@ try:
             line = f.readline()
 
     # PRINT WHOLE SCHEDULE, S
+    print("####################### SCHEDULE : #########################")
     for individual_list in ls:
         print(individual_list)
     
@@ -97,9 +97,6 @@ try:
         print("#################### Order of execution (Topological Sort) #######################")
         order = g.topologicalSort()
         for item in order:
-            if order.index(item)!='-1':
-                print("T"+str(item+1),end='->')
-            else:
-                print("T"+str(item+1))
+            print("T"+str(item+1),end='->')
 except:
     print("There is error in Input file format!")
