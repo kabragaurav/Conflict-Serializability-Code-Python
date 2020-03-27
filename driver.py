@@ -20,77 +20,86 @@ from cycle_printer import *
 # We will send it to cycle_printer module
 graph = {}   
 
-
-def isConflicting(instruction1, instruction2):
-    if instruction1 == "VACANT" or instruction2 == "VACANT":
+try:
+    print("####################### SCHEDULE : #########################")
+    def isConflicting(instruction1, instruction2):
+        if instruction1 == "VACANT" or instruction2 == "VACANT":
+            return False
+        oper1, oper2 = instruction1[0], instruction2[0]
+        data_item1, data_item2 = instruction1[2], instruction2[2]
+        if oper1 == "W" or oper2 == "W":
+            if data_item1 == data_item2:
+                return True
         return False
-    oper1, oper2 = instruction1[0], instruction2[0]
-    data_item1, data_item2 = instruction1[2], instruction2[2]
-    if oper1 == "W" or oper2 == "W":
-        if data_item1 == data_item2:
-            return True
-    return False
 
 
-file_name = input("Enter complete file path e.g. './/input.txt'")
+    file_name = input("Enter complete file path e.g. './/Inputs//input.txt'")
 
-# read file
-# and find how many trans ie vertices in graph
-with open(file_name) as f:
-    first_line = f.readline().split(":")
-    no_of_transactions = len(first_line[1].split(','))
+    # read file
+    # and find how many trans ie vertices in graph
+    with open(file_name) as f:
+        first_line = f.readline().split(":")
+        no_of_transactions = len(first_line[1].split(','))
 
-# make 2-d array of lists for different transactions
-ls = [[] for _ in range(no_of_transactions)]
+    # make 2-d array of lists for different transactions
+    ls = [[] for _ in range(no_of_transactions)]
 
-# now populate these lists
+    # now populate these lists
 
-with open(file_name) as f:
-    # skip first 3 lines
-    for _ in range(3):
-        temp = f.readline()
-    line = f.readline()
-    while line:
-        level1 = line.split(":")
-        transaction_no = int(level1[0][1])  # e.g. extract 1 from T1
-        count = 0
-        for _ in range(len(ls)):
-            if _ == transaction_no-1:
-                ls[_].append(level1[1][:-2])
-            else:
-                ls[_].append("VACANT")
+    with open(file_name) as f:
+        # skip first 3 lines
+        for _ in range(3):
+            temp = f.readline()
         line = f.readline()
+        while line:
+            level1 = line.split(":")
+            transaction_no = int(level1[0][1])  # e.g. extract 1 from T1
+            count = 0
+            for _ in range(len(ls)):
+                if _ == transaction_no-1:
+                    ls[_].append(level1[1][:-2])
+                else:
+                    ls[_].append("VACANT")
+            line = f.readline()
 
-# PRINT WHOLE SCHEDULE, S
-for individual_list in ls:
-    print(individual_list)
+    # PRINT WHOLE SCHEDULE, S
+    for individual_list in ls:
+        print(individual_list)
+    
 
 
-# Now create a directed graph
-g = Graph(no_of_transactions)
-# Edge is added as Ti->Tj when Ti and Tj
-# operate on same data-type and at least one operation is W
-L = len(ls[0])     # length of transactions
-for transaction_id in range(no_of_transactions):
-    for i in range(L):
-        instruction = ls[transaction_id][i]
-        for j in range(no_of_transactions):
-            if j == transaction_id:
-                continue
+    # Now create a directed graph
+    g = Graph(no_of_transactions)
+    # Edge is added as Ti->Tj when Ti and Tj
+    # operate on same data-type and at least one operation is W
+    L = len(ls[0])     # length of transactions
+    for transaction_id in range(no_of_transactions):
+        for i in range(L):
+            instruction = ls[transaction_id][i]
+            for j in range(no_of_transactions):
+                if j == transaction_id:
+                    continue
+                else:
+                    for k in range(i+1,L):
+                        if isConflicting(instruction, ls[j][k]):
+                            g.addEdge(transaction_id,j)
+                            if transaction_id not in graph.keys():
+                                graph[transaction_id] = [j]
+                            else:
+                                graph[transaction_id].append(j)
+    print("######################## RESULT: ###################################")
+    if g.isCyclic():
+        print("NOT Conflict Serializable.")
+        print("######################## Cycle(s): ######################")
+        cycle_printing_fn(graph)
+    else:
+        print("Conflict Serializable")
+        print("#################### Order of execution (Topological Sort) #######################")
+        order = g.topologicalSort()
+        for item in order:
+            if order.index(item)!='-1':
+                print("T"+str(item+1),end='->')
             else:
-                for k in range(i+1,L):
-                    if isConflicting(instruction, ls[j][k]):
-                        g.addEdge(transaction_id,j)
-                        if transaction_id not in graph.keys():
-                            graph[transaction_id] = [j]
-                        else:
-                            graph[transaction_id].append(j)
-
-if g.isCyclic():
-    print("NOT Conflict Serializable.\n Cycle(s) in the graph:")
-    cycle_printing_fn(graph)
-else:
-    print("Conflict Serializable\nAnd the topological order is:")
-    order = g.topologicalSort()
-    for item in order:
-        print("T"+str(item+1),end='->')
+                print("T"+str(item+1))
+except:
+    print("There is error in Input file format!")
